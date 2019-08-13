@@ -57,5 +57,41 @@ $(document).ready(function() {
         "</div>"
       ].join("")
     );
+    articleContainer.append(emptyAlert);
+  }
+
+  function handleArticleSave() {
+    var articleToSave = $(this)
+      .parents(".card")
+      .data();
+    $(this)
+      .parents(".card")
+      .remove();
+
+    articleToSave.saved = true;
+
+    $ajax({
+      method: "PUT",
+      url: "/api/headlines/" + articleToSave._id,
+      data: articleToSave
+    }).then(function(data) {
+      if (data.saved) {
+        initPage();
+      }
+    });
+  }
+
+  function handleArticleScrape() {
+    $get("/api/fetch").then(function(data) {
+      initPage();
+      bootbox.alert($("<h3 class='text-center m-top-80'>").text(data.message));
+    });
+  }
+
+  function handleArticleClear() {
+    $.get("api/clear").then(function() {
+      articleContainer.empty();
+      initPage();
+    });
   }
 });
